@@ -1,0 +1,27 @@
+{
+  "name": "youtube-chat-logger",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "while true; do xvfb-maybe electron .; sleep 10; done",
+    "start-heroku": "INDEX_ENDPOINT=http://sakura-dori.herokuapp.com/api npm run start",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^13.1.4"
+  },
+  "dependencies": {
+    "axios": "^0.21.1",
+    "cheerio": "^1.0.0-rc.9",
+    "dotenv": "^10.0.0",
+    "jquery": "^3.6.0",
+    "moment": "^2.29.1",
+    "moment-timezone": "^0.5.33",
+    "ramda": "^0.27.1",
+    "rxjs": "^7.1.0",
+    "set-tz": "^0.2.0"
+  }
+}
