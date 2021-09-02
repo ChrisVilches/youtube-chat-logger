@@ -5,7 +5,6 @@
 ```bash
 # Necessary for running Electron headless.
 sudo apt install xvfb
-npm i xvfb-maybe -g
 
 npm install
 ```
@@ -27,8 +26,6 @@ pkill -9 Xvfb
 # or
 pkill -9 xvfb
 ```
-
-Some other errors might be due to different Electron versions. It works with `13.0.1` (TODO: Set it in `package.json`). And in Digital Ocean it seems to take a longer time to boot, for some reason.
 
 ## Execution
 
