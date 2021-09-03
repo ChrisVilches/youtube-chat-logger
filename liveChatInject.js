@@ -23,5 +23,5 @@ function sendMessages(){
 }
 
 window.onload = function(){
-  setInterval(sendMessages, 10000);
+  setInterval(sendMessages, 1000);
 }

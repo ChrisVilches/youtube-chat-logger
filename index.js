@@ -133,7 +133,7 @@ app.whenReady().then(() => {
     await scrapeChatTitle(chatId);
 
     // To avoid timeout errors due to large batches, make the batches smaller.
-    const chunks = R.splitEvery(20, messages);
+    const chunks = R.splitEvery(10, messages);
     for(let i=0; i<chunks.length; i++){
       messageBatchesStream.next({ chatId, messages: chunks[i] });
     }
