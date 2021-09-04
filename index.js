@@ -89,6 +89,8 @@ const scrapeChatTitle = async chatId => {
 
     let response = await axios.get(`https://www.youtube.com/watch?v=${chatId}`);
     const $ = cheerio.load(response.data);
+    const imageUrl = $('meta[property="og:image"]').attr('content') || $('meta[property="og:image:url"]').attr('content');
+
     let title = $('title').text();
 
     if(typeof title != 'string') return;
@@ -98,7 +100,8 @@ const scrapeChatTitle = async chatId => {
 
     const scrapeResponse = await axios.put('index_chat_title', {
       chatId,
-      title
+      title,
+      imageUrl
     });
 
     log('Finished scraping chat title.', chatId, scrapeResponse.data);
