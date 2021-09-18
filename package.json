@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "while true; do ./node_modules/.bin/xvfb-maybe ./node_modules/.bin/electron . --no-sandbox; sleep 10; done",
-    "start-heroku": "INDEX_ENDPOINT=http://sakura-dori.herokuapp.com/api npm run start",
+    "start": "while true; do xvfb-maybe npm run start-without-retry; sleep 10; done",
+    "start-without-retry": "electron . --no-sandbox",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
