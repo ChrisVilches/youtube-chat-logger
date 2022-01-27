@@ -23,12 +23,18 @@ apt-get -y install --no-install-recommends xorg openbox libnss3 libasound2 libat
 
 Also `Running as root without --no-sandbox is not supported.` error may happen in some situations, so the `npm start` command was updated to include that option in the `electron` command. If this fails, try removing it.
 
-In some cases it's necessary to kill a process before starting:
+In some cases it's necessary to kill a process before starting (**Note:** It's now recommended to do this always before starting the process, since this error will eventually happen if existing `xvfb` processes are not killed):
 
 ```bash
 pkill -9 Xvfb
 # or
 pkill -9 xvfb
+```
+
+Or use the built-in script:
+
+```
+npm run kill-xvfb
 ```
 
 ## Execution
