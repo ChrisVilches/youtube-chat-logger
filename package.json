@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "npm run kill-xvfb && xvfb-maybe electron . --no-sandbox",
+    "start": "npm run kill-xvfb; xvfb-maybe electron . --no-sandbox",
     "kill-xvfb": "pkill -9 Xvfb; pkill -9 xvfb"
   },
   "author": "",
