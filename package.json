@@ -4,9 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "while true; do xvfb-maybe npm run start-without-retry; sleep 10; done",
-    "start-without-retry": "electron . --no-sandbox",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "npm run kill-xvfb && xvfb-maybe electron . --no-sandbox",
     "kill-xvfb": "pkill -9 Xvfb; pkill -9 xvfb"
   },
   "author": "",

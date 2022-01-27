@@ -23,20 +23,6 @@ apt-get -y install --no-install-recommends xorg openbox libnss3 libasound2 libat
 
 Also `Running as root without --no-sandbox is not supported.` error may happen in some situations, so the `npm start` command was updated to include that option in the `electron` command. If this fails, try removing it.
 
-In some cases it's necessary to kill a process before starting (**Note:** It's now recommended to do this always before starting the process, since this error will eventually happen if existing `xvfb` processes are not killed):
-
-```bash
-pkill -9 Xvfb
-# or
-pkill -9 xvfb
-```
-
-Or use the built-in script:
-
-```
-npm run kill-xvfb
-```
-
 ## Execution
 
 Create `.env` file with the following content:
@@ -47,9 +33,7 @@ INDEX_ENDPOINT=http://deploy-url/api
 CHAT_IDS=EHkMjfMw7oU,HpdO5Kq3o7Y,pjwy2a096YE,-5KAN9_CzSA,PchC9iKADuo
 ```
 
-The process intentionally ends after certain conditions (e.g. unrecoverable errors), and starts running again afterwards.
-
-The messages are most likely still on screen, so they will be attempted to be indexed again.
+The process intentionally ends after certain conditions (e.g. unrecoverable errors). The process must be restarted using a proper process manager like `forever`, `nodemon` or `pm2`. The messages are most likely still on screen, so they will be attempted to be indexed again.
 
 Start the scraper with:
 
