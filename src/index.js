@@ -149,10 +149,13 @@ async function scrapeMessages(chatId, page) {
     const result = await sendData('index_messages', { chatId, messages: [payload] })
     console.log(`Indexed ${chatId} ${payload.text.substring(0, 20)}...`)
 
-    alreadySent[chatId].add(payload.id)
-
-    return result
+    if (result) {
+      alreadySent[chatId].add(payload.id)
+    }
   }
+
+  // TODO: There's actually nothing to return. Just make it void and remove the "if" below.
+  return true
 }
 
 
