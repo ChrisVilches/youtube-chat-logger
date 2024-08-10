@@ -105,7 +105,13 @@ async function scrapeMetadata(chatId) {
 
   //console.log(info)
   const title = info.basic_info.title
-  const imageUrl = info.basic_info.thumbnail[0].url
+  const thumbnail = info.basic_info.thumbnail
+  let imageUrl
+
+  if (thumbnail && thumbnail.length > 0) {
+    imageUrl = thumbnail[0].url
+  }
+
   console.log([chatId, title, imageUrl])
   return await sendData('index_chat_title', { chatId, title, imageUrl })
 }
