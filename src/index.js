@@ -95,10 +95,10 @@ async function scrapeMetadata(chatId) {
 
   if ((title ?? '').trim().length === 0) {
     console.error(`Couldn't get title from ${chatId}`)
-    return false
+    return await sendData('index_chat_title', { chatId, title: `${chatId} - cannot obtain`, imageUrl: 'https://' })
   }
 
-  return sendData('index_chat_title', { chatId, title, imageUrl })
+  return await sendData('index_chat_title', { chatId, title, imageUrl })
 }
 
 const alreadySent = {}
