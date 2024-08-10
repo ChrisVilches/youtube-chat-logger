@@ -81,8 +81,9 @@ async function scrapeMetadata(chatId) {
   const $ = load(rawHtml)
   const imageUrl = $('meta[property="og:image"]').attr('content') || $('meta[property="og:image:url"]').attr('content')
 
-  const botString = "Sign in to confirm you're not a bot"
+  const botString = "not a bot"
 
+  console.log('Raw HTML (first few characters)', rawHtml.substring(0, 100))
   if (rawHtml.includes(botString)) {
     console.warn(`Raw HTML contains the string: ${botString}`)
   }
