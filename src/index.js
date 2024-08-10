@@ -13,10 +13,12 @@ const indexApiKey = process.env.INDEX_API_KEY ?? ''
 const indexEndpoint = process.env.INDEX_ENDPOINT ?? ''
 const useVerboseLog = process.env.VERBOSE_LOG === '1'
 const headless = process.env.OPEN_BROWSER !== '1'
+const browserArgs = (process.env.BROWSER_ARGS ?? '').split(',').map(x => x.trim())
 
 console.log('verbose log', useVerboseLog)
 console.log('headless', headless)
 console.log('chat IDs', chatIds)
+console.log('browser args', browserArgs)
 
 const useApi = indexApiKey.length > 0 && indexEndpoint.length > 0
 
@@ -126,7 +128,8 @@ function openBrowser() {
   console.log('Getting browser (executing only once!!!!)')
   return puppeteer.launch({
     // TODO: It only works with headless: false... should be true.
-    headless
+    headless,
+    args: browserArgs
   })
 }
 
