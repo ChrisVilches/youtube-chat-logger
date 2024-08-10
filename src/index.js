@@ -103,6 +103,7 @@ async function scrapeMetadata(chatId) {
   const info = await youtube.getBasicInfo(chatId)
   console.log(`Obtained info for ${chatId}`)
 
+  console.log(info)
   //console.log(info)
   const title = info.basic_info.title
   const thumbnail = info.basic_info.thumbnail
