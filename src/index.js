@@ -2,6 +2,8 @@ import puppeteer from 'puppeteer'
 import axios from 'axios'
 import { load } from 'cheerio'
 import { sleep, cleanTitle, cleanMessageContent } from './util.js'
+import { Innertube } from 'youtubei.js';
+const youtube = await Innertube.create(/* options */);
 
 const userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36'
 
@@ -71,33 +73,40 @@ async function sendData(urlPath, payload) {
 }
 
 async function scrapeMetadata(chatId) {
-  const url = `https://www.youtube.com/watch?v=${chatId}`
-  const page = await (await browser).newPage()
-  await page.setUserAgent(userAgent)
-  await page.goto(url)
-  await page.waitForSelector('title')
-  const rawHtml = await page.evaluate(() => document.documentElement.outerHTML);
-  await page.close()
-  const $ = load(rawHtml)
-  const imageUrl = $('meta[property="og:image"]').attr('content') || $('meta[property="og:image:url"]').attr('content')
+  //const url = `https://www.youtube.com/watch?v=${chatId}`
+  //const page = await (await browser).newPage()
+  //await page.setUserAgent(userAgent)
+  //await page.goto(url)
+  //await page.waitForSelector('title')
+  //const rawHtml = await page.evaluate(() => document.documentElement.outerHTML);
+  //await page.close()
+  //const $ = load(rawHtml)
+  //const imageUrl = $('meta[property="og:image"]').attr('content') || $('meta[property="og:image:url"]').attr('content')
+  //
+  //const botString = "not a bot"
+  //
+  //console.log('Raw HTML (first few characters)', rawHtml.substring(0, 100))
+  //if (rawHtml.includes(botString)) {
+  //  console.warn(`Raw HTML contains the string: ${botString}`)
+  //}
+  //
+  //const title = cleanTitle($('title').text())
+  //
+  //console.log('Visited URL', url)
+  //console.log(`${chatId}: ${title} (image url: ${imageUrl})`)
+  //
+  //if ((title ?? '').trim().length === 0) {
+  //  console.error(`Couldn't get title from ${chatId}`)
+  //  return await sendData('index_chat_title', { chatId, title: `${chatId} - cannot obtain`, imageUrl: 'https://' })
+  //}
+  console.log(`Getting basic info for ${chatId}`)
+  const info = await youtube.getBasicInfo(chatId)
+  console.log(`Obtained info for ${chatId}`)
 
-  const botString = "not a bot"
-
-  console.log('Raw HTML (first few characters)', rawHtml.substring(0, 100))
-  if (rawHtml.includes(botString)) {
-    console.warn(`Raw HTML contains the string: ${botString}`)
-  }
-
-  const title = cleanTitle($('title').text())
-
-  console.log('Visited URL', url)
-  console.log(`${chatId}: ${title} (image url: ${imageUrl})`)
-
-  if ((title ?? '').trim().length === 0) {
-    console.error(`Couldn't get title from ${chatId}`)
-    return await sendData('index_chat_title', { chatId, title: `${chatId} - cannot obtain`, imageUrl: 'https://' })
-  }
-
+  //console.log(info)
+  const title = info.basic_info.title
+  const imageUrl = info.basic_info.thumbnail[0].url
+  console.log([chatId, title, imageUrl])
   return await sendData('index_chat_title', { chatId, title, imageUrl })
 }
 
@@ -105,6 +114,7 @@ const alreadySent = {}
 
 // TODO: Not sure what this does, but after testing without this, some emojis
 //       didn't get scraped.
+// TODO: I just saw a message where flags got removed. But other emojis work, so maybe I don't have flags??
 function fixEmojis($) {
   $('#message').find('img.emoji').each(function() {
     $(this).replaceWith($(this).attr('shared-tooltip-text'))
@@ -187,7 +197,6 @@ async function scrape(chatId, idx) {
     console.error(`Chat metadata ${chatId} could not be scraped`)
     return
   }
-
 
   await withPage(`https://www.youtube.com/live_chat?v=${chatId}`, async page => {
     for (let iter = 0; iter < scrapeTimes; iter++) {
