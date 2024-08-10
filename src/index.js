@@ -174,7 +174,9 @@ async function withPage(url, cb) {
   await page.close()
 }
 
-async function scrape(chatId) {
+async function scrape(chatId, idx) {
+  await sleep(idx * 6000)
+
   if (!(await scrapeMetadata(chatId))) {
     console.error(`Chat metadata ${chatId} could not be scraped`)
     return
@@ -201,7 +203,8 @@ async function main() {
   // Since sometimes the page may get broken, or stop working,
   // do a limited amount of times, then close the browser and process,
   // and have it restarted (via the process manager).
-  await Promise.all(chatIds.map(scrape));
+  // TODO: Probably works just by passing the function to map()
+  await Promise.all(chatIds.map((chatId, idx) => scrape(chatId, idx)));
 
   (await browser).close()
   console.log('Closing scraper')
