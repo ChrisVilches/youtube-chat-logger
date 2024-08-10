@@ -147,6 +147,7 @@ async function scrapeMessages(chatId, page) {
 
     // Single element instead of batch, for simplicity.
     const result = await sendData('index_messages', { chatId, messages: [payload] })
+    console.log(`Indexed ${chatId} ${payload.text.substring(0, 20)}...`)
 
     alreadySent[chatId].add(payload.id)
 
