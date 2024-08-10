@@ -22,10 +22,15 @@ console.log('browser args', browserArgs)
 
 const useApi = indexApiKey.length > 0 && indexEndpoint.length > 0
 
+const apiClient = axios.create({
+  baseURL: indexEndpoint,
+  headers: {
+    'Content-Type': 'application/json',
+    'X-API-KEY': indexApiKey
+  }
+})
+
 if (useApi) {
-  axios.defaults.baseURL = indexEndpoint
-  axios.defaults.headers.common['Content-Type'] = 'application/json'
-  axios.defaults.headers.common['X-API-KEY'] = indexApiKey
   console.log('Sending data to', indexEndpoint)
   console.log('Using key', indexApiKey)
 } else {
@@ -46,7 +51,7 @@ async function sendData(urlPath, payload) {
   }
 
   try {
-    const res = await axios.put(urlPath, payload)
+    const res = await apiClient.put(urlPath, payload)
 
     verboseLog(res.data)
 
