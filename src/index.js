@@ -2,8 +2,6 @@ import puppeteer from 'puppeteer'
 import axios from 'axios'
 import { load } from 'cheerio'
 import { sleep, cleanMessageContent } from './util.js'
-import { Innertube } from 'youtubei.js';
-const youtube = await Innertube.create();
 
 const userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36'
 
@@ -75,35 +73,6 @@ async function sendData(urlPath, payload) {
 }
 
 async function scrapeMetadata(chatId) {
-  //const url = `https://www.youtube.com/watch?v=${chatId}`
-  //const page = await (await browser).newPage()
-  //await page.setUserAgent(userAgent)
-  //await page.goto(url)
-  //await page.waitForSelector('title')
-  //const rawHtml = await page.evaluate(() => document.documentElement.outerHTML);
-  //await page.close()
-  //const $ = load(rawHtml)
-  //const imageUrl = $('meta[property="og:image"]').attr('content') || $('meta[property="og:image:url"]').attr('content')
-  //
-  //const botString = "not a bot"
-  //
-  //console.log('Raw HTML (first few characters)', rawHtml.substring(0, 100))
-  //if (rawHtml.includes(botString)) {
-  //  console.warn(`Raw HTML contains the string: ${botString}`)
-  //}
-  //
-  //const title = cleanTitle($('title').text())
-  //
-  //console.log('Visited URL', url)
-  //console.log(`${chatId}: ${title} (image url: ${imageUrl})`)
-  //
-  //if ((title ?? '').trim().length === 0) {
-  //  console.error(`Couldn't get title from ${chatId}`)
-  //  return await sendData('index_chat_title', { chatId, title: `${chatId} - cannot obtain`, imageUrl: 'https://' })
-  //}
-  // TODO: This one is having a lot of trouble. It seems the best way to go about this is to
-  //       get an API key and scrape it the intended way.
-
   const url = `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${chatId}&key=${youtubeApi3Key}`
 
   const { data } = await axios.get(url, {
@@ -115,26 +84,6 @@ async function scrapeMetadata(chatId) {
   // TODO: Just expecting this work lol... I think I should do some checking first.
   const title = data.items[0].snippet.title
   const imageUrl = data.items[0].snippet.thumbnails.default.url
-  //console.log(`Getting basic info for ${chatId}`)
-  //const info = await youtube.getBasicInfo(chatId)
-  //console.log(`Obtained info for ${chatId}`)
-  //
-  //console.log(info)
-  ////console.log(info)
-  //const title = info.basic_info.title
-  //const thumbnail = info.basic_info.thumbnail
-  //let imageUrl
-  //
-  //if (thumbnail && thumbnail.length > 0) {
-  //  imageUrl = thumbnail[0].url
-  //}
-  //
-  //
-  //if (!title) {
-  //  // TODO: This is to create a video without title.
-  //  // It's necessary in order to scrape messages. (if the video doesn't exist, it may fail)
-  //  return await sendData('index_chat_title', { chatId, title: `${chatId} - cannot obtain`, imageUrl: 'https://someimg' })
-  //}
 
   console.log([chatId, title, imageUrl])
   return await sendData('index_chat_title', { chatId, title, imageUrl })
@@ -187,22 +136,17 @@ async function scrapeMessages(chatId, page) {
 
     // Single element instead of batch, for simplicity.
     const result = await sendData('index_messages', { chatId, messages: [payload] })
-    console.log(`Indexed ${chatId} ${payload.text.substring(0, 20)}...`)
+    console.log(`Indexed ${chatId}: ${payload.text.substring(0, 20)}...`)
 
     if (result) {
       alreadySent[chatId].add(payload.id)
     }
   }
-
-  // TODO: There's actually nothing to return. Just make it void and remove the "if" below.
-  return true
 }
 
-
 function openBrowser() {
-  console.log('Getting browser (executing only once!!!!)')
+  console.log('Opening browser...')
   return puppeteer.launch({
-    // TODO: It only works with headless: false... should be true.
     headless,
     args: browserArgs
   })
@@ -215,14 +159,11 @@ async function withPage(url, cb) {
   await page.setUserAgent(userAgent)
   await page.goto(url)
   await page.waitForNetworkIdle()
-
   await cb(page)
   await page.close()
 }
 
-async function scrape(chatId, idx) {
-  await sleep(idx * 6000)
-
+async function scrape(chatId) {
   if (!(await scrapeMetadata(chatId))) {
     console.error(`Chat metadata ${chatId} could not be scraped`)
     return
@@ -248,8 +189,7 @@ async function main() {
   // Since sometimes the page may get broken, or stop working,
   // do a limited amount of times, then close the browser and process,
   // and have it restarted (via the process manager).
-  // TODO: Probably works just by passing the function to map()
-  await Promise.all(chatIds.map((chatId, idx) => scrape(chatId, idx)));
+  await Promise.all(chatIds.map(scrape));
 
   (await browser).close()
   console.log('Closing scraper')
