@@ -57,6 +57,7 @@ async function sendData(urlPath, payload) {
     console.error(e)
     return false
   }
+
   return true
 }
 
@@ -67,7 +68,7 @@ async function scrapeMetadata(chatId) {
 
   const title = cleanTitle($('title').text())
 
-  sendData('index_chat_title', { chatId, title, imageUrl })
+  return sendData('index_chat_title', { chatId, title, imageUrl })
 }
 
 const alreadySent = {}
@@ -117,9 +118,9 @@ async function scrapeMessages(chatId, page) {
     // Single element instead of batch, for simplicity.
     const result = await sendData('index_messages', { chatId, messages: [payload] })
 
-    if (result) {
-      alreadySent[chatId].add(payload.id)
-    }
+    alreadySent[chatId].add(payload.id)
+
+    return result
   }
 }
 
@@ -146,7 +147,10 @@ async function withPage(url, cb) {
 }
 
 async function scrape(chatId) {
-  await scrapeMetadata(chatId)
+  if (!(await scrapeMetadata(chatId))) {
+    console.error(`Chat metadata ${chatId} could not be scraped`)
+    return
+  }
 
 
   await withPage(`https://www.youtube.com/live_chat?v=${chatId}`, async page => {
@@ -156,7 +160,10 @@ async function scrape(chatId) {
         verboseLog('reloaded page', chatId)
       }
 
-      await scrapeMessages(chatId, page)
+      if (!(await scrapeMessages(chatId, page))) {
+        console.error(`A message in chat ${chatId} had errors. Stopping...`)
+        break
+      }
       await sleep(sleepMsBetweenScrapes)
     }
   })
