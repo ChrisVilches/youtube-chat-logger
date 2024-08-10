@@ -23,6 +23,8 @@ console.log('chat IDs', chatIds)
 console.log('browser args', browserArgs)
 console.log('youtube api v3 key', youtubeApi3Key)
 
+// TODO: This is kinda deprecated... now I should always use API
+//       and perhaps I should validate the environment variables using Zod.
 const useApi = indexApiKey.length > 0 && indexEndpoint.length > 0
 
 const apiClient = axios.create({
@@ -136,7 +138,7 @@ async function scrapeMessages(chatId, page) {
 
     // Single element instead of batch, for simplicity.
     const result = await sendData('index_messages', { chatId, messages: [payload] })
-    console.log(`Indexed ${chatId}: ${payload.text.substring(0, 20)}...`)
+    console.log(`[${chatId}] Indexed. ${payload.author}: ${payload.text.substring(0, 20)}...`)
 
     if (result) {
       alreadySent[chatId].add(payload.id)
