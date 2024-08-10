@@ -99,6 +99,8 @@ async function scrapeMetadata(chatId) {
   //  console.error(`Couldn't get title from ${chatId}`)
   //  return await sendData('index_chat_title', { chatId, title: `${chatId} - cannot obtain`, imageUrl: 'https://' })
   //}
+  // TODO: This one is having a lot of trouble. It seems the best way to go about this is to
+  //       get an API key and scrape it the intended way.
   console.log(`Getting basic info for ${chatId}`)
   const info = await youtube.getBasicInfo(chatId)
   console.log(`Obtained info for ${chatId}`)
@@ -111,6 +113,11 @@ async function scrapeMetadata(chatId) {
 
   if (thumbnail && thumbnail.length > 0) {
     imageUrl = thumbnail[0].url
+  }
+
+
+  if (!title) {
+    return await sendData('index_chat_title', { chatId, title: `${chatId} - cannot obtain`, imageUrl: 'https://someimg' })
   }
 
   console.log([chatId, title, imageUrl])
