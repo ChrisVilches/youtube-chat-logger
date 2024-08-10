@@ -73,6 +73,7 @@ async function scrapeMetadata(chatId) {
 
   const title = cleanTitle($('title').text())
 
+  console.log(`${chatId}: ${title} (image url: ${imageUrl})`)
   return sendData('index_chat_title', { chatId, title, imageUrl })
 }
 
