@@ -1,9 +1,9 @@
 import puppeteer from 'puppeteer'
 import axios from 'axios'
 import { load } from 'cheerio'
-import { sleep, cleanTitle, cleanMessageContent } from './util.js'
+import { sleep, cleanMessageContent } from './util.js'
 import { Innertube } from 'youtubei.js';
-const youtube = await Innertube.create(/* options */);
+const youtube = await Innertube.create();
 
 const userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36'
 
@@ -17,11 +17,13 @@ const indexEndpoint = process.env.INDEX_ENDPOINT ?? ''
 const useVerboseLog = process.env.VERBOSE_LOG === '1'
 const headless = process.env.OPEN_BROWSER !== '1'
 const browserArgs = (process.env.BROWSER_ARGS ?? '').split(',').map(x => x.trim())
+const youtubeApi3Key = process.env.YOUTUBE_API_V3_KEY
 
 console.log('verbose log', useVerboseLog)
 console.log('headless', headless)
 console.log('chat IDs', chatIds)
 console.log('browser args', browserArgs)
+console.log('youtube api v3 key', youtubeApi3Key)
 
 const useApi = indexApiKey.length > 0 && indexEndpoint.length > 0
 
@@ -101,24 +103,38 @@ async function scrapeMetadata(chatId) {
   //}
   // TODO: This one is having a lot of trouble. It seems the best way to go about this is to
   //       get an API key and scrape it the intended way.
-  console.log(`Getting basic info for ${chatId}`)
-  const info = await youtube.getBasicInfo(chatId)
-  console.log(`Obtained info for ${chatId}`)
 
-  console.log(info)
+  const url = `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${chatId}&key=${youtubeApi3Key}`
+
+  const { data } = await axios.get(url, {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+
+  // TODO: Just expecting this work lol... I think I should do some checking first.
+  const title = data.items[0].snippet.title
+  const imageUrl = data.items[0].snippet.thumbnails.default.url
+  //console.log(`Getting basic info for ${chatId}`)
+  //const info = await youtube.getBasicInfo(chatId)
+  //console.log(`Obtained info for ${chatId}`)
+  //
   //console.log(info)
-  const title = info.basic_info.title
-  const thumbnail = info.basic_info.thumbnail
-  let imageUrl
-
-  if (thumbnail && thumbnail.length > 0) {
-    imageUrl = thumbnail[0].url
-  }
-
-
-  if (!title) {
-    return await sendData('index_chat_title', { chatId, title: `${chatId} - cannot obtain`, imageUrl: 'https://someimg' })
-  }
+  ////console.log(info)
+  //const title = info.basic_info.title
+  //const thumbnail = info.basic_info.thumbnail
+  //let imageUrl
+  //
+  //if (thumbnail && thumbnail.length > 0) {
+  //  imageUrl = thumbnail[0].url
+  //}
+  //
+  //
+  //if (!title) {
+  //  // TODO: This is to create a video without title.
+  //  // It's necessary in order to scrape messages. (if the video doesn't exist, it may fail)
+  //  return await sendData('index_chat_title', { chatId, title: `${chatId} - cannot obtain`, imageUrl: 'https://someimg' })
+  //}
 
   console.log([chatId, title, imageUrl])
   return await sendData('index_chat_title', { chatId, title, imageUrl })
