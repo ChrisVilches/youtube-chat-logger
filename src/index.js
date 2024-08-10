@@ -67,12 +67,14 @@ async function sendData(urlPath, payload) {
 }
 
 async function scrapeMetadata(chatId) {
-  const response = await axios.get(`https://www.youtube.com/watch?v=${chatId}`)
+  const url = `https://www.youtube.com/watch?v=${chatId}`
+  const response = await axios.get(url)
   const $ = load(response.data)
   const imageUrl = $('meta[property="og:image"]').attr('content') || $('meta[property="og:image:url"]').attr('content')
 
   const title = cleanTitle($('title').text())
 
+  console.log('Visited URL', url)
   console.log(`${chatId}: ${title} (image url: ${imageUrl})`)
   return sendData('index_chat_title', { chatId, title, imageUrl })
 }
