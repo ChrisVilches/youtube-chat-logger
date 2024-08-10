@@ -83,6 +83,12 @@ async function scrapeMetadata(chatId) {
 
   console.log('Visited URL', url)
   console.log(`${chatId}: ${title} (image url: ${imageUrl})`)
+
+  if ((title ?? '').trim().length === 0) {
+    console.error(`Couldn't get title from ${chatId}`)
+    return false
+  }
+
   return sendData('index_chat_title', { chatId, title, imageUrl })
 }
 
