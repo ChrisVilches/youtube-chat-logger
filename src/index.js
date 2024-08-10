@@ -59,7 +59,10 @@ async function sendData(urlPath, payload) {
       throw new Error('Messages contain errors')
     }
   } catch (e) {
-    console.error(e)
+    console.error('Indexing failed')
+    console.error(`URL: ${urlPath}`)
+    console.error(`Payload: ${payload}`)
+    console.error(e.message)
     return false
   }
 
