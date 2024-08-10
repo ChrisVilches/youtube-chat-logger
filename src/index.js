@@ -75,6 +75,7 @@ async function scrapeMetadata(chatId) {
   const page = await (await browser).newPage()
   await page.setUserAgent(userAgent)
   await page.goto(url)
+  await page.waitForSelector('title')
   const rawHtml = await page.evaluate(() => document.documentElement.outerHTML);
   await page.close()
   const $ = load(rawHtml)
