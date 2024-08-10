@@ -68,7 +68,11 @@ async function sendData(urlPath, payload) {
 
 async function scrapeMetadata(chatId) {
   const url = `https://www.youtube.com/watch?v=${chatId}`
-  const response = await axios.get(url)
+  const response = await axios.get(url, {
+    headers: {
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36'
+    }
+  })
   const $ = load(response.data)
   const imageUrl = $('meta[property="og:image"]').attr('content') || $('meta[property="og:image:url"]').attr('content')
 
