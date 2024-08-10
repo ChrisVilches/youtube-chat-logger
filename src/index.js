@@ -176,10 +176,7 @@ async function scrape(chatId) {
         verboseLog('reloaded page', chatId)
       }
 
-      if (!(await scrapeMessages(chatId, page))) {
-        console.error(`A message in chat ${chatId} had errors. Stopping...`)
-        break
-      }
+      await scrapeMessages(chatId, page)
       await sleep(sleepMsBetweenScrapes)
     }
   })
