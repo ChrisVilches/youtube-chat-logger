@@ -3,6 +3,7 @@ import axios from 'axios'
 import { load } from 'cheerio'
 import { sleep, cleanTitle, cleanMessageContent } from './util.js'
 
+const userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36'
 
 const sleepMsBetweenScrapes = 3000
 const reloadPageEvery = 40
@@ -73,7 +74,7 @@ async function scrapeMetadata(chatId) {
   const url = `https://www.youtube.com/watch?v=${chatId}`
   const response = await axios.get(url, {
     headers: {
-      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36'
+      'User-Agent': userAgent
     }
   })
   const $ = load(response.data)
@@ -159,7 +160,7 @@ const browser = openBrowser()
 
 async function withPage(url, cb) {
   const page = await (await browser).newPage()
-  await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36')
+  await page.setUserAgent(userAgent)
   await page.goto(url)
   await page.waitForNetworkIdle()
 
