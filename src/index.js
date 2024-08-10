@@ -195,4 +195,6 @@ async function main() {
   console.log('Closing scraper')
 }
 
+console.log('Starting scraper', new Date())
+
 main().catch(console.error)
