@@ -4,7 +4,7 @@ import { config } from './config.js'
 // const userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36'
 
 const args = config.BROWSER_ARGS
-const headless = config.OPEN_BROWSER
+const headless = !config.OPEN_BROWSER
 
 function openBrowser () {
   console.log('Opening browser...')
