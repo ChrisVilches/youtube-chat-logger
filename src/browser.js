@@ -20,7 +20,7 @@ export async function withPage (url, cb) {
   const page = await (await browser).newPage()
   await page.setUserAgent(userAgent)
 
-  const abortTypes = new Set(['image', 'media', 'font'])
+  const abortTypes = new Set(['media', 'font'])
 
   page.setRequestInterception(true)
   page.on('request', async req => {
