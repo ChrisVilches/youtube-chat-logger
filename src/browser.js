@@ -8,11 +8,10 @@ const headless = !config.OPEN_BROWSER
 
 function openBrowser () {
   console.log('Opening browser...')
-  return puppeteer.launch({
-    headless,
-    args
-  })
+  return puppeteer.launch({ headless, args })
 }
+
+const abortTypes = new Set(['media', 'font'])
 
 export const browser = openBrowser()
 
@@ -20,10 +19,8 @@ export async function withPage (url, cb) {
   const page = await (await browser).newPage()
   await page.setUserAgent(userAgent)
 
-  const abortTypes = new Set(['media', 'font'])
-
   page.setRequestInterception(true)
-  page.on('request', async req => {
+  page.on('request', req => {
     if (abortTypes.has(req.resourceType())) {
       req.abort()
     } else {
